@@ -1,3 +1,27 @@
+.my-btn {
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+.guess-btn {
+    background-color: rgb(105, 128, 105);
+}
+
+.answer-btn {
+    background-color: #748ca1;
+}
+
 .quit-btn {
     background-color: #a66565;
+    padding: 0.5rem 3rem;
+}
+
+.guess-div {
+    display: flex;
+    flex-direction: column;
+}
+
+.guess-input {
+    margin: 0.5rem;
+    padding: 0.5rem;
 }

@@ -1,16 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./gameComponent.css";
 import { useAppContext } from "../AppContext";
 import countries from "../scripts/countries.json";
 
 const NR_OF_COUNTRIES = Object.keys(countries).length;
-const START_FLAG = "SE";
 
 function GameComponent() {
-    const [country, setCountry] = useState(START_FLAG);
+    const [country, setCountry] = useState("");
     const { setActiveFrame } = useAppContext();
+    const [guess, setGuess] = useState("");
 
-    function makeGuess() {}
+    //Get new country on load
+    useEffect(() => {
+        console.log("Initial country was loaded...");
+        setNewCountry();
+    }, []);
+
+    //Eventhandler for keyboard inputs
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === "Enter") {
+                makeGuess();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [guess, country]);
+
+    function printCountry() {
+        console.log("The answer was: " + countries[country]);
+    }
+
+    function setNewCountry() {
+        const nextCountry = getRandomCountry();
+        setCountry(() => nextCountry);
+    }
+
+    function makeGuess() {
+        if (guess === countries[country]) {
+            console.log("You were correct!");
+            printCountry();
+            setNewCountry();
+        } else {
+            console.log("You were wrong! Try again");
+            console.log(countries[country] + ", " + guess);
+        }
+        setGuess(() => "");
+    }
+
+    function getAnswer() {
+        printCountry();
+        setNewCountry();
+    }
 
     function getRandomCountry() {
         const randNum = Math.floor(Math.random() * NR_OF_COUNTRIES);
@@ -30,30 +73,37 @@ function GameComponent() {
                 <img
                     src={getFlagUrl(country)}
                     className="logo react"
-                    alt="Start flag"
+                    alt="flag to guess"
                 />
             </div>
-            <div className="card">
+            <div className="card guess-div">
+                <p>What flag is this?</p>
+                <input
+                    type="text"
+                    className="guess-input"
+                    placeholder="Make a guess..."
+                    value={guess}
+                    onChange={(e) => setGuess(e.target.value)}
+                />
                 <button
+                    className="my-btn guess-btn"
                     onClick={() => {
-                        const nextCountry = getRandomCountry();
-                        setCountry(() => nextCountry);
-                        console.log(
-                            nextCountry +
-                                ", " +
-                                countries[nextCountry] +
-                                ", " +
-                                getFlagUrl(nextCountry)
-                        );
+                        makeGuess();
                     }}
                 >
                     Guess
                 </button>
-                <p>What flag is this?</p>
-                <input type="text" name="guess-input" />
+                <button
+                    className="my-btn answer-btn"
+                    onClick={() => {
+                        getAnswer();
+                    }}
+                >
+                    Reveal Answer
+                </button>
             </div>
             <button
-                className="quit-btn"
+                className="my-btn quit-btn"
                 onClick={() => setActiveFrame("start")}
             >
                 Give up
