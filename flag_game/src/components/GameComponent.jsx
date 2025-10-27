@@ -39,7 +39,7 @@ function GameComponent() {
     }
 
     function makeGuess() {
-        if (guess === countries[country]) {
+        if (guess.toLowerCase() === countries[country].toLowerCase()) {
             console.log("You were correct!");
             printCountry();
             setNewCountry();
