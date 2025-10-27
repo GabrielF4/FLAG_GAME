@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
 import "./gameComponent.css";
+import { useState, useEffect } from "react";
 import { useAppContext } from "../AppContext";
-import countries from "../scripts/countries.json";
-
-const NR_OF_COUNTRIES = Object.keys(countries).length;
+import { useKeyboardShortcut } from "../hooks/useKeyboardShortcut";
+import { getFlagURL, getCountryName } from "../utils/convertionUtils";
+import { getRandomCountry } from "../utils/generateCountries";
 
 function GameComponent() {
     const [country, setCountry] = useState("");
-    const { setActiveFrame } = useAppContext();
     const [guess, setGuess] = useState("");
+    const { setActiveFrame } = useAppContext();
 
     //Get new country on load
     useEffect(() => {
@@ -20,7 +20,7 @@ function GameComponent() {
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key === "Enter") {
-                makeGuess();
+                makeGuess(guess, getCountryName(country));
             }
         };
 
@@ -29,50 +29,42 @@ function GameComponent() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [guess, country]);
 
+    //Simple print statement
     function printCountry() {
-        console.log("The answer was: " + countries[country]);
+        console.log("The answer was: " + getCountryName(country));
     }
 
+    //Set country state to a ranom country
     function setNewCountry() {
         const nextCountry = getRandomCountry();
         setCountry(() => nextCountry);
     }
 
-    function makeGuess() {
-        if (guess.toLowerCase() === countries[country].toLowerCase()) {
+    //Action for when you submit a guess
+    function makeGuess(guess, answer) {
+        if (guess.toLowerCase() === answer.toLowerCase()) {
             console.log("You were correct!");
             printCountry();
             setNewCountry();
         } else {
             console.log("You were wrong! Try again");
-            console.log(countries[country] + ", " + guess);
+            console.log(answer + ", " + guess);
         }
         setGuess(() => "");
     }
 
+    //Action for when you submit the answer to the guess
     function getAnswer() {
         printCountry();
         setNewCountry();
-    }
-
-    function getRandomCountry() {
-        const randNum = Math.floor(Math.random() * NR_OF_COUNTRIES);
-        return Object.keys(countries)[randNum];
-    }
-
-    function getFlagUrl(flagCode) {
-        return new URL(
-            `../assets/flags/${flagCode.toLowerCase()}.svg`,
-            import.meta.url
-        ).href;
     }
 
     return (
         <div className="game-frame">
             <div>
                 <img
-                    src={getFlagUrl(country)}
-                    className="logo react"
+                    src={getFlagURL(country)}
+                    className="react logo"
                     alt="flag to guess"
                 />
             </div>
@@ -88,7 +80,7 @@ function GameComponent() {
                 <button
                     className="my-btn guess-btn"
                     onClick={() => {
-                        makeGuess();
+                        makeGuess(guess, getCountryName(country));
                     }}
                 >
                     Guess

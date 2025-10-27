@@ -4,7 +4,7 @@ import StartPage from "./components/StartPage";
 import GameComponent from "./components/GameComponent";
 
 function App() {
-    let { activeFrame, setActiveFrame } = useAppContext();
+    let { activeFrame } = useAppContext();
 
     //Render content based on the active state
     const RenderFrameContent = () => {

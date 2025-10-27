@@ -1,26 +1,26 @@
-import { useState, useContext } from "react";
-import countries from "../scripts/countries.json";
-import { AppContext, useAppContext } from "../AppContext";
+import { useState } from "react";
+import { useAppContext } from "../AppContext";
+import { getFlagURL } from "../utils/convertionUtils";
+import { getRandomCountry } from "../utils/generateCountries";
 
 const START_FLAG = "SE";
 
 function StartPage() {
-    const { activeFrame, setActiveFrame } = useAppContext();
+    const { setActiveFrame } = useAppContext();
+    const [startFlag, setStartFlag] = useState(START_FLAG);
 
-    function getFlagUrl(flagCode) {
-        return new URL(
-            `../assets/flags/${flagCode.toLowerCase()}.svg`,
-            import.meta.url
-        ).href;
+    function setRandomFlag() {
+        setStartFlag(() => getRandomCountry());
     }
 
     return (
         <div className="start-page">
             <div>
                 <img
-                    src={getFlagUrl(START_FLAG)}
-                    className="logo react"
+                    src={getFlagURL(startFlag)}
+                    className="logo logo-spin react"
                     alt="Start flag"
+                    onClick={() => setRandomFlag()}
                 />
             </div>
             <h1>Flag Game</h1>
